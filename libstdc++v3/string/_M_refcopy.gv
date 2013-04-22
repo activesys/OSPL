@@ -1,0 +1,19 @@
+digraph G {
+    graph [rankdir = LR];
+    node [shape = record];
+    subgraph cluster_basic_string {
+        graph [label = "basic_string", color = white];
+        _M_dataplus_0 [label = "_M_dataplus::_M_p"];
+    }
+    subgraph cluster__str_Rep {
+        graph [label = "__str::_Rep", color = white];
+        _Rep [label = "<f0>_M_length|<f1>_M_capacity|<f2>_M_refcount|<f3>data"];
+    }
+    subgraph cluster__str {
+        graph [label = "__str", color = white];
+        _M_dataplus_1 [label = "_M_dataplus::_M_p"];
+    }
+
+    _M_dataplus_0 -> _Rep:f3;
+    _M_dataplus_1 -> _Rep:f3;
+}
