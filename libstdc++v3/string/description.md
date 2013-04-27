@@ -26,7 +26,7 @@ basic_string的构造函数在bits/basic_string.h的419~497行生命，但是除
 
 ### _M_refcopy()
 
-_M_refcopy函数定义在bits/basic_string.h的242~250行，249行通过_M_refdata返回了指向当前字符串的指针。
+函数_M_refcopy定义在bits/basic_string.h的242~250行，249行通过_M_refdata返回了指向当前字符串的指针。
 248行__gnu_cxx::__atomic_add_dispatch函数定义在ext/atomicity.h的87~99行，在这里这个函数就是将
 _M_refcount加1。
 
@@ -35,7 +35,7 @@ _M_refcount加1。
 
 ### _M_clone()
 
-_M_clone函数定义在bits/basic_string.tcc的622~636行，根据当前字符串的长度_M_length和新增的大小__res
+函数_M_clone定义在bits/basic_string.tcc的622~636行，根据当前字符串的长度_M_length和新增的大小__res
 来计算新的容量__requested_cap，然后_S_create函数生成一个新的basic_string::_Rep，并且把当前字符串的
 内容拷贝到新的_Rep的字符串中，将新的_Rep字符串设置长度和可共享，然后返回_Rep指向的新的字符串的指针。
 
@@ -61,7 +61,7 @@ __n是0所以并没有调用_M_assign这个函数。
 
 ### _M_assign
 
-_M_assign定义在bits/basic_string.h的356~363行，根据长度调用了traits_type的两个重载的assign函数。
+函数_M_assign定义在bits/basic_string.h的356~363行，根据长度调用了traits_type的两个重载的assign函数。
 traits_type是什么呢？看看basic_string的类的开始部分。110行说明traits_type是_Traits的重定义，而
 _Traits是模板参数，那么具体的类型就不知道了。bits/stringfwd.h的50~52行给出了默认的模板参数，
 _Traits = char_traits<_CharT>。
@@ -109,4 +109,18 @@ _M_leak_hard函数强制变成非共享的。
 
 函数_M_mutate执行结束之后得到了一个新的不与其他字符串共享_Rep的字符串，但是这个新的字符串也是可共享的
 接下来调用_Rep::_M_set_leaked来强制当前字符串不可共享。
+
+# 字符操作
+
+## push_back
+
+push_back函数定义在bits/basic_string.h的913~921行，当当前字符串中没有多余的空间容纳这个字符或者
+是当前字符串是共享的，那么就需要重新分配空间。918行调用reserve来分配额外的空间。将字符赋值给
+最后一个字符位置，并且设置长度。
+
+## reserve
+
+reserve函数定义在bits/basic_string.tcc的500~515行，当要求的长度__res不等于容量或者当前字符串
+是共享的时候，要调用_Rep::_M_clone来克隆_Rep，但是这里有一个需要注意的，当__res小于当前长度的
+时候，将__res设置为当前长度，意图是不会缩减有效数据。
 
